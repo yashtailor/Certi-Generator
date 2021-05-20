@@ -14,6 +14,8 @@ import io
 from io import StringIO,BytesIO
 from PIL import ImageFont, ImageDraw, Image, ImageQt
 from urllib.request import urlopen
+import zlib
+import zipfile
 # User configuration
 sender_email = 'conveners2021@technovanza.org'
 sender_name = 'Technovanza Conveners, 2021'
@@ -33,8 +35,40 @@ receiver_names = []
 receiver_positions = []
 receiver_types = []
 # receiver_desigs = []
-file = open('Senates.csv','r')
-csv_reader = csv.reader(file)
+url_csv = "https://res.cloudinary.com/codemafia/raw/upload/v1621526877/CertiSheets/fmyuw0wpfpje9bcwkepn.csv"
+response = urlopen(url_csv)
+lines = [l.decode('utf-8') for l in response.readlines()]
+csv_reader = csv.reader(lines)
+
+def compress(file_names):
+    print("File Paths:")
+    print(file_names)
+
+    path = "C:/data/"
+
+    # Select the compression mode ZIP_DEFLATED for compression
+    # or zipfile.ZIP_STORED to just store the file
+    compression = zipfile.ZIP_DEFLATED
+
+    # create the zip file first parameter path/name, second mode
+    zf = zipfile.ZipFile("Certis.zip", mode="w")
+    count = 0
+    try:
+        for file_name in file_names:
+            # Add file to the zip file
+            # first parameter file to zip, second filename in zip
+            if count == 0:
+                count += 1
+                continue
+            print('COA - '+file_name+'.pdf')
+            zf.write('COA - '+file_name+'.pdf', 'COA - '+file_name+'.pdf', compress_type=compression)
+
+    except FileNotFoundError:
+        print("An error occurred")
+    finally:
+        # Don't forget to close the file!
+        zf.close()
+
 for data in csv_reader:
         # names = []
         receiver_names.append(data[0])
@@ -57,15 +91,10 @@ for data in csv_reader:
         #         receiver_positions.append('Techno Manager')
 print(receiver_names,receiver_positions,receiver_types)
 
-# Email body
-email_html = open('text.html')
-# image_cid = make_msgid(domain='technovanza.org')
-# print(image_cid)
-email_body = email_html.read()
 
 filename = 'text.txt'
 
-font_url = "https://res.cloudinary.com/codemafia/raw/upload/v1621522278/FontFiles/xbkqcsvqjvv7r7orl7up.ttf"
+font_url = "https://res.cloudinary.com/codemafia/raw/upload/v1621526250/FontFiles/bpjcwpabqtzk8s915yo8.ttf"
 
 # fd = urllib.urlopen(font_url)
 # image_font = io.BytesIO(fd.read())
@@ -79,7 +108,7 @@ for receiver_name, receiver_position,receiver_type  in zip(receiver_names, recei
         # Configurating user's info
         # img = cv2.imread('COA_VJTI_Senate.png')
         # pil_im = Image.fromarray(img)  
-        pil_im = Image.open('COA_VJTI_Senate.png')
+        pil_im = Image.open(urlopen("https://res.cloudinary.com/codemafia/image/upload/v1621529612/Templates/usscpnihffrnwllncydb.png"))
         draw = ImageDraw.Draw(pil_im)  
         # use a truetype font  
         font = ImageFont.truetype(urlopen(font_url), 45)  
@@ -179,3 +208,5 @@ Chinmay Desai,Convener,chinmaycm1@gmail.com
 Shrenil Chovatiya,Convener,chovatiyashrenil@gmail.com
 Abhinav Ven,Convener,abhinavven@gmail.com
 '''
+
+compress(receiver_names)
