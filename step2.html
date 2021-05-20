@@ -1,0 +1,145 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certi Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Pattaya&family=Roboto:wght@100&display=swap" rel="stylesheet">
+</head>
+<body>
+    <img id="curTemplate" alt="Certi Image">
+    <br>
+    <input type="file" onchange="loadFile(event)">
+    <button class="btn btn-primary" onclick="moveToStep3()">Next</button>
+</body>
+<script>
+    var CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/codemafia/image/upload";
+    var CLOUDINARY_DELETE_URL = "https://api.cloudinary.com/v1_1/codemafia/image/destroy";
+    var CLOUDINARY_UPLOAD_PRESET = "ksx2b0v2";
+    var curFile = null;
+
+    document.addEventListener('click',(event)=>{
+        var browserZoomLevel = Math.round(window.devicePixelRatio * 100);
+        var doc = document.documentElement;
+        var left = event.clientX + this.scrollX;
+        var top = event.clientY + this.scrollY;
+        // var cur_x = left*25 / browserZoomLevel;
+        // var cur_y = top*25 / browserZoomLevel;
+        var ok = prompt("Co-ord:"+left+","+top);
+        if(ok!=null){
+
+            var newGlobalText = document.createElement('span');
+            newGlobalText.classList += 'demo';
+            newGlobalText.draggable = true;
+            newGlobalText.style.fontSize = "20px";
+            newGlobalText.style.position = 'absolute';
+            newGlobalText.style.left = left+'px';
+            newGlobalText.style.top = top+'px';
+
+            var newText = document.createElement('span');
+            newText.innerText = ok;
+            newText.style.fontSize = "20px";
+            newText.style.fontFamily = localStorage.getItem('fontStyle');
+
+            var buttonP = document.createElement('span');
+            buttonP.classList.add('badge');
+            buttonP.classList.add('bg-success');
+            buttonP.innerText = "+";
+            buttonP.addEventListener('click',(event)=>{
+                let curFont = newText.style.fontSize;
+                newText.style.fontSize = (Number(curFont.substr(0,curFont.length-2)) + 1) + "px";
+                event.stopPropagation();
+            })
+
+            var buttonM = document.createElement('span');
+            buttonM.innerText = "-";
+            buttonM.classList.add('badge');
+            buttonM.classList.add('bg-primary');
+            buttonM.addEventListener('click',(event)=>{
+                let curFont = newText.style.fontSize;
+                newText.style.fontSize = (Number(curFont.substr(0,curFont.length-2)) - 1) + "px";
+                event.stopPropagation();
+            })
+
+            var buttonX = document.createElement('span');
+            buttonX.innerText = "X";
+            buttonX.classList.add('badge');
+            buttonX.classList.add('bg-danger');
+            buttonX.addEventListener('click',(event)=>{
+                document.getElementsByTagName('body')[0].removeChild(newGlobalText); 
+                event.stopPropagation();
+            })
+
+            newGlobalText.appendChild(newText);
+            newGlobalText.appendChild(buttonP);
+            newGlobalText.appendChild(buttonM);
+            newGlobalText.appendChild(buttonX);
+
+            document.getElementsByTagName('body')[0].appendChild(newGlobalText); 
+        }
+    })
+
+    var loadFile = function(event) {
+        var image = document.getElementById('curTemplate');
+        image.src = URL.createObjectURL(event.target.files[0]);
+        var file = event.target.files[0];  
+        curFile = file;    
+        var fileName = event.target.files[0].name;      
+        var blob = new Blob([file]);
+        var url  = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        // a.click();
+        //this.attr({ 'download': filename, 'href': url});  
+    };
+
+    /*async function clearLocalStorageImageFromCloudinary(){
+        var formData = new FormData();
+        formData.append("file", curFile);
+        formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+        formData.append("folder","Templates");
+        formData.append("public_id",localStorage.getItem("templatePublicUrl"));
+        console.log(formData);
+        const req = new XMLHttpRequest();
+        req.open("POST", CLOUDINARY_URL);
+        req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+        req.send(formData);
+        req.onreadystatechange = function () {
+            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                var response = JSON.parse(req.responseText);
+                console.log(response);
+            }
+        }
+    }*/
+
+    async function moveToStep3(){
+        /*if(localStorage.getItem("templatePublicUrl")!=null){
+            clearLocalStorageImageFromCloudinary();
+        }*/
+        var formData = new FormData();
+        formData.append("file", curFile);
+        formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+        formData.append("tags", "browser_upload");
+        formData.append("folder","Templates");
+        console.log(formData);
+        const req = new XMLHttpRequest();
+        req.open("POST", CLOUDINARY_URL);
+        req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+        req.send(formData);
+        req.onreadystatechange = function () {
+            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                var response = JSON.parse(req.responseText);
+                var url = response.secure_url;
+                var pub_url = response.public_id;
+                localStorage.setItem('templateUrl',url);
+                localStorage.setItem('templatePublicUrl',pub_url);
+                console.log(url)
+            }
+        }
+    }
+</script>
+</html>

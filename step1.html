@@ -1,0 +1,88 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certi Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Select Font Style</h1>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="fontStyle" id="fontStyle1" checked value="JosefinSans-Regular">
+            <label class="form-check-label" for="fontStyle1">
+              JosefinSans-Regular
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="fontStyle" id="fontStyle2" value="JosefinSans-SemiBold">
+            <label class="form-check-label" for="fontStyle2">
+              JosefinSans-SemiBold
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="fontStyle" id="fontStyle3" value="JosefinSans-Bold">
+            <label class="form-check-label" for="fontStyle2">
+              JosefinSans-Bold
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="fontStyle" id="fontStyle2" value="Pattaya">
+            <label class="form-check-label" for="fontStyle2">
+              Pattaya
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="fontStyle" id="fontStyle3" value="Roboto">
+            <label class="form-check-label" for="fontStyle2">
+              Roboto
+            </label>
+        </div>
+        <input type="file" onchange="loadFile(event)">
+        <br>
+        <button class="btn btn-primary" onclick="moveToStep2()">Next</button>
+    </div>
+</body>
+<script>
+    var CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/codemafia/upload";
+    var CLOUDINARY_DELETE_URL = "https://api.cloudinary.com/v1_1/codemafia/image/destroy";
+    var CLOUDINARY_UPLOAD_PRESET = "ksx2b0v2";
+    var curTtfFile = null;
+
+    async function moveToStep2(){
+
+        var formData = new FormData();
+        formData.append("file", curTtfFile);
+        formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+        formData.append("tags", "browser_upload");
+        formData.append("folder","FontFiles");
+        console.log(formData);
+        const req = new XMLHttpRequest();
+        req.open("POST", CLOUDINARY_URL);
+        req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+        req.send(formData);
+        req.onreadystatechange = function () {
+            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                var response = JSON.parse(req.responseText);
+                var url = response.secure_url;
+                var pub_url = response.public_id;
+                localStorage.setItem('FontFileUrl',url);
+                localStorage.setItem('FontFilePublicUrl',pub_url);
+                console.log(url)
+            }
+        }
+
+        var fontStyle = document.querySelector('input[name="fontStyle"]:checked').value;
+        localStorage.setItem('fontStyle',fontStyle);
+        console.log(fontStyle);
+        window.location.href = "step2.html";
+    }
+
+    var loadFile = function(event) {
+        var file = event.target.files[0];  
+        curTtfFile = file;    
+    };
+</script>
+</html>
