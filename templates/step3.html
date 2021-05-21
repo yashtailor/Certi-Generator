@@ -10,10 +10,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Pattaya&family=Roboto:wght@100&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>Upload the Sheet</h1>
+    <div class="container" style="border:2px dashed black;padding:10px;margin-top:10px;">
+        <h1>Upload the Sheet (.csv)</h1>
         <input type="file" onchange="loadFile(event)">
-        <br>
+        <br><br>
         <button class="btn btn-primary" onclick="moveToStep4()">Next</button>
     </div>
 </body>
@@ -28,7 +28,7 @@
         curSheet = file;    
     };
 
-    function moveToStep4(){
+    async function moveToStep4(){
         var formData = new FormData();
         formData.append("file", curSheet);
         formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
@@ -39,7 +39,7 @@
         req.open("POST", CLOUDINARY_URL);
         req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
         req.send(formData);
-        req.onreadystatechange = function () {
+        req.onreadystatechange = await function () {
             if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
                 var response = JSON.parse(req.responseText);
                 var url = response.secure_url;
@@ -47,6 +47,7 @@
                 localStorage.setItem('SheetUrl',url);
                 localStorage.setItem('SheetPublicUrl',pub_url);
                 console.log(url)
+                window.location.href = "step4";
             }
         }
     }

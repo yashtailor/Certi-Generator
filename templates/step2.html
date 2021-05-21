@@ -10,10 +10,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Pattaya&family=Roboto:wght@100&display=swap" rel="stylesheet">
 </head>
 <body>
-    <img id="curTemplate" alt="Certi Image">
+    <img id="curTemplate" alt="Certi Image" style="display: none;">
     <br>
-    <input type="file" onchange="loadFile(event)">
-    <button class="btn btn-primary" onclick="moveToStep3()">Next</button>
+    <div class="container" style="border:2px dashed black;padding:10px;margin-top:10px;">
+        <h1>Upload The Template (.jpg/.png)</h1>
+        <input type="file" onchange="loadFile(event)">
+        <br><br>
+        <button class="btn btn-primary" onclick="moveToStep3()">Next</button>
+    </div>
 </body>
 <script>
     var CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/codemafia/image/upload";
@@ -86,6 +90,9 @@
         var image = document.getElementById('curTemplate');
         image.src = URL.createObjectURL(event.target.files[0]);
         var file = event.target.files[0];  
+        if(file!=null){
+            document.getElementById('curTemplate').style.display = '';
+        }
         curFile = file;    
         var fileName = event.target.files[0].name;      
         var blob = new Blob([file]);
@@ -130,14 +137,22 @@
         req.open("POST", CLOUDINARY_URL);
         req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
         req.send(formData);
-        req.onreadystatechange = function () {
+        req.onreadystatechange = await function () {
             if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
                 var response = JSON.parse(req.responseText);
                 var url = response.secure_url;
                 var pub_url = response.public_id;
                 localStorage.setItem('templateUrl',url);
                 localStorage.setItem('templatePublicUrl',pub_url);
-                console.log(url)
+                var points = document.getElementsByClassName('demo');
+                var coords = []
+                for(let i=0;i<points.length;i++){
+                    var text_child_size = points[i].children[0].style.fontSize;
+                    coords.push([points[i].style.left,points[i].style.top,text_child_size]);
+                }
+                localStorage.setItem("coords",JSON.stringify(coords));  
+                console.log("here:",url);
+                window.location.href = "step3";
             }
         }
     }

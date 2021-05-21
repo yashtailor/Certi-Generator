@@ -9,7 +9,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
 </head>
 <body>
-    <button class="btn btn-primary" onclick="generateCertis()">Process</button>
+    <div class="container" style="border:2px dashed black;padding:10px;margin-top:10px;">
+        <h1>Generate Certis</h1>
+        <button class="btn btn-primary" onclick="generateCertis()">Process</button>
+        <br>
+        <a href="/get-file" target="blank" style="display: none;" id="download"><button class="btn btn-default">Download</button></a>
+    </div>
 </body>
 <script>
     function generateCertis(){
@@ -21,16 +26,34 @@
         formData.append("image_url", imageUrl);
         formData.append("font_url", fontUrl);
         formData.append("sheet_url", sheetUrl);
+        formData.append("coords",localStorage.getItem("coords"));
         console.log(formData);
         const req = new XMLHttpRequest();
         req.open("POST", "http://localhost:5000/generateCerti");
         req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-        req.send(formData);
         req.onreadystatechange = function () {
             if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-                console.log(req.responseText);
+                console.log(req.responseText,typeof(req.response));
+                if(JSON.parse(req.response).success == "ok"){
+                    document.getElementById("download").style.display = '';
+                }
+                /*var blob = new Blob([req.response]);
+                console.log(blob);
+                var url = window.URL.createObjectURL(blob);
+                var link = document.createElement('a');
+                document.body.appendChild(link);
+                link.style = "display: none";
+                link.href = url;
+                console.log(url);
+                link.download = "coa.pdf";
+                link.click();
+
+                setTimeout(() => {
+                window.URL.revokeObjectURL(url);
+                link.remove(); } , 100);*/
             }
         }
+        req.send(formData);
     }
 </script>
 </html>
