@@ -29,7 +29,7 @@
         formData.append("coords",localStorage.getItem("coords"));
         console.log(formData);
         const req = new XMLHttpRequest();
-        req.open("POST", "http://localhost:5000/generateCerti");
+        req.open("POST", "http://certigini.herokuapp.com/generateCerti");
         req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
         req.onreadystatechange = function () {
             if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
