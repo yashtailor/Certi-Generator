@@ -25,7 +25,18 @@
     var CLOUDINARY_UPLOAD_PRESET = "ksx2b0v2";
     var curFile = null;
 
-    document.addEventListener('click',(event)=>{
+    if(localStorage.getItem("FontFileUrl")){
+        var newStyle = document.createElement('style');
+        newStyle.appendChild(document.createTextNode("\
+        @font-face {\
+            font-family: " + "CustomFont" + ";\
+            src: url('"+localStorage.getItem("FontFileUrl") + "'');\
+        }\
+        "));
+        document.head.appendChild(newStyle);
+    }
+
+    document.getElementById("curTemplate").addEventListener('click',(event)=>{
         var browserZoomLevel = Math.round(window.devicePixelRatio * 100);
         var doc = document.documentElement;
         var left = event.clientX + this.scrollX;
@@ -46,12 +57,13 @@
             var newText = document.createElement('span');
             newText.innerText = ok;
             newText.style.fontSize = "20px";
-            newText.style.fontFamily = localStorage.getItem('fontStyle');
+            newText.style.fontFamily = 'CustomFont';
 
             var buttonP = document.createElement('span');
             buttonP.classList.add('badge');
             buttonP.classList.add('bg-success');
             buttonP.innerText = "+";
+            buttonP.style.margin = "2px";
             buttonP.addEventListener('click',(event)=>{
                 let curFont = newText.style.fontSize;
                 newText.style.fontSize = (Number(curFont.substr(0,curFont.length-2)) + 1) + "px";
@@ -62,6 +74,7 @@
             buttonM.innerText = "-";
             buttonM.classList.add('badge');
             buttonM.classList.add('bg-primary');
+            buttonM.style.margin = "2px";
             buttonM.addEventListener('click',(event)=>{
                 let curFont = newText.style.fontSize;
                 newText.style.fontSize = (Number(curFont.substr(0,curFont.length-2)) - 1) + "px";
@@ -72,15 +85,66 @@
             buttonX.innerText = "X";
             buttonX.classList.add('badge');
             buttonX.classList.add('bg-danger');
+            buttonX.style.margin = "2px";
             buttonX.addEventListener('click',(event)=>{
                 document.getElementsByTagName('body')[0].removeChild(newGlobalText); 
                 event.stopPropagation();
+            })
+
+            var buttonSZ = document.createElement('span');
+            buttonSZ.classList.add('badge');
+            buttonSZ.classList.add('bg-info');
+            buttonSZ.innerText = "Sz";
+            buttonSZ.style.margin = "2px";
+            buttonSZ.addEventListener('click',(event)=>{
+                var sz = prompt("Enter the Font Size:");
+                if(sz!=null && sz > 0){
+                    newText.style.fontSize = sz;
+                }
             })
 
             newGlobalText.appendChild(newText);
             newGlobalText.appendChild(buttonP);
             newGlobalText.appendChild(buttonM);
             newGlobalText.appendChild(buttonX);
+            newGlobalText.appendChild(buttonSZ);
+
+            newText.onmousedown = function(event) {
+
+                let shiftX = event.clientX - newGlobalText.getBoundingClientRect().left;
+                let shiftY = event.clientY - newGlobalText.getBoundingClientRect().top;
+
+                newGlobalText.style.position = 'absolute';
+                newGlobalText.style.zIndex = 1000;
+                document.body.append(newGlobalText);
+
+                moveAt(event.pageX, event.pageY);
+
+                // moves the newGlobalText at (pageX, pageY) coordinates
+                // taking initial shifts into account
+                function moveAt(pageX, pageY) {
+                    newGlobalText.style.left = pageX - shiftX + 'px';
+                    newGlobalText.style.top = pageY - shiftY + 'px';
+                }
+
+                function onMouseMove(event) {
+                    moveAt(event.pageX, event.pageY);
+                }
+
+                // move the newGlobalText on mousemove
+                document.addEventListener('mousemove', onMouseMove);
+
+                // drop the newGlobalText, remove unneeded handlers
+                newText.onmouseup = function() {
+                    document.removeEventListener('mousemove', onMouseMove);
+                    newGlobalText.onmouseup = null;
+                };
+
+            };
+
+            newGlobalText.ondragstart = function() {
+            return false;
+            };
 
             document.getElementsByTagName('body')[0].appendChild(newGlobalText); 
         }
@@ -156,5 +220,6 @@
             }
         }
     }
+
 </script>
 </html>
