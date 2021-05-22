@@ -42,6 +42,10 @@ def get_file():
 def get_template():
    return send_file('template.csv', attachment_filename='template.csv',mimetype='text/csv', as_attachment=True)
 
+@app.route('/get-certificate-template')
+def get_certi_template():
+   return send_file('certificate_template.jpg', attachment_filename='certificate.jpg',mimetype='image/jpg', as_attachment=True)
+
 @app.route('/deleteResources',methods=["POST"])
 def test_cloudinary():
    image_public_id = request.form['image_pub_id']
