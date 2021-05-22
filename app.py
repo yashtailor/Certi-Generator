@@ -1,12 +1,17 @@
 from zlib import DEF_BUF_SIZE
-from flask import Flask, render_template,request,send_from_directory
+from flask import Flask, render_template,request
 from flask.helpers import send_file
-from flask.wrappers import Request
 from certi import compress,generate_certis
-from io import BytesIO
-import zipfile
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 import json
-import time
+cloudinary.config( 
+  cloud_name = "codemafia", 
+  api_key = "126772947881962", 
+  api_secret = "aBU9n2w7UKS1f28wsqg1CNEih8s" 
+)
+
 app = Flask(__name__)
 
 @app.route('/')
@@ -33,6 +38,25 @@ def step4():
 def get_file():
    return send_file('Certis.zip', attachment_filename='Certis.zip')
 
+@app.route('/get-template')
+def get_template():
+   return send_file('template.csv', attachment_filename='template.csv',mimetype='text/csv', as_attachment=True)
+
+@app.route('/deleteResources',methods=["POST"])
+def test_cloudinary():
+   image_public_id = request.form['image_pub_id']
+   sheet_public_id = request.form['sheet_pub_id']
+   font_public_id = request.form['font_pub_id']
+   if image_public_id != "":
+      print(cloudinary.uploader.destroy(image_public_id,resource_type='image'))
+   if sheet_public_id != "":
+      print(cloudinary.uploader.destroy(sheet_public_id,resource_type='raw'))
+   if font_public_id != "":
+      print(cloudinary.uploader.destroy(font_public_id,resource_type='raw'))
+   return {
+      "success":"ok",
+   }
+
 @app.route('/generateCerti',methods=["POST"])
 def generate_certi():
    image_url = request.form['image_url']
@@ -53,4 +77,4 @@ def generate_certi():
    }
 
 if __name__ == '__main__':
-   app.run(debug=True)
+   app.run()

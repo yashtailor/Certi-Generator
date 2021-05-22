@@ -7,20 +7,93 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.gstatic.com">
+    <meta http-equiv="expires" content="0">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container" style="border:2px dashed black;padding:10px;margin-top:10px;">
+     <!-- Button trigger modal -->
+  <button id="launch-modal" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="display: none;">
+    Launch Loader
+  </button>
+  
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="exampleModalLabel" style="color: black;">File Being Uploaded...</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="loader-section">
+                        <div class="loader"></div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="display: none;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="close-modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" style="border:3px dashed wheat;padding:10px;margin-top:10px;">
         <h1>Generate Certis</h1>
         <button class="btn btn-primary" onclick="generateCertis()">Process</button>
-        <br>
-        <a href="/get-file" target="blank" style="display: none;" id="download"><button class="btn btn-default">Download</button></a>
+        <br><br>
+        <a href="/get-file?v=1" target="blank" style="display: none;" id="download"><button class="btn btn-success">Download</button></a>
+        <br><br>
+        <a href="/" id="back"><button class="btn btn-primary">Back</button></a>
     </div>
 </body>
 <script>
+    function delete_cur_documents(){
+        const imagePublicUrl = localStorage.getItem("templatePublicUrl");
+        const fontPublicUrl = localStorage.getItem("FontFilePublicUrl");
+        const sheetPublicUrl = localStorage.getItem("SheetPublicUrl");
+        var formData = new FormData();
+        if(imagePublicUrl != "null"){
+            formData.append("image_pub_id",imagePublicUrl);
+        }else formData.append("image_pub_id","");
+        if(fontPublicUrl != "null"){
+            formData.append("font_pub_id",fontPublicUrl);
+        }else formData.append("font_pub_id","");
+        if(sheetPublicUrl != "null"){
+            formData.append("sheet_pub_id",sheetPublicUrl);
+        }else formData.append("sheet_pub_id","");
+        console.log(formData);
+        const req = new XMLHttpRequest();
+        req.open("POST", "http://certigini.herokuapp.com/deleteResources");
+        req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+        req.onreadystatechange = function () {
+            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                console.log(req.responseText,typeof(req.response));
+                if(JSON.parse(req.response).success == "ok"){
+                    localStorage.setItem("templatePublicUrl" , null);
+                    localStorage.setItem("FontFilePublicUrl" , null);
+                    localStorage.setItem("SheetPublicUrl" , null);
+                    document.getElementById("close-modal").click();
+                }
+            }
+        }
+        req.send(formData);
+    }
+
     function generateCertis(){
+        document.getElementById("launch-modal").click();
         const imageUrl = localStorage.getItem('templateUrl');
         const fontUrl = localStorage.getItem('FontFileUrl');
         const sheetUrl = localStorage.getItem('SheetUrl');
+        if(imageUrl == null || imageUrl=="null"){
+            alert("Missing Image Template");
+            return;
+        }
+        if(fontUrl == null || fontUrl=="null"){
+            alert("Missing Font File");
+            return;
+        }
+        if(sheetUrl == null || sheetUrl=="null"){
+            alert("Missing Sheet");
+            return;
+        }
         console.log(imageUrl,fontUrl,sheetUrl);
         var formData = new FormData();
         formData.append("image_url", imageUrl);
@@ -29,13 +102,15 @@
         formData.append("coords",localStorage.getItem("coords"));
         console.log(formData);
         const req = new XMLHttpRequest();
-        req.open("POST", "http://certigini.herokuapp.com/generateCerti");
+        req.open("POST", "http://localhost:5000/generateCerti");
         req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
         req.onreadystatechange = function () {
             if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
                 console.log(req.responseText,typeof(req.response));
                 if(JSON.parse(req.response).success == "ok"){
+                    document.getElementById("download").setAttribute("href","/get-file?v="+parseInt(Math.random()*10000000));
                     document.getElementById("download").style.display = '';
+                    delete_cur_documents();
                 }
                 /*var blob = new Blob([req.response]);
                 console.log(blob);
@@ -56,4 +131,30 @@
         req.send(formData);
     }
 </script>
+<style>
+    body{
+        background: #42275a;  /* fallback for old browsers */
+        background: -webkit-linear-gradient(to right, #734b6d, #42275a);  /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(to right, #734b6d, #42275a); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        color:wheat;
+        font-family: 'Dancing Script', cursive;
+        font-size: 1.5em;
+    }
+    .btn{
+        font-size: 1.5em;
+    }
+    .loader {
+        border: 16px solid #f3f3f3; /* Light grey */
+        border-top: 16px solid #42275a; /* Blue */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+    }
+    .loader-section{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+</style>
 </html>

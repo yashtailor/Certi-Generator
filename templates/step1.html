@@ -6,41 +6,79 @@
     <title>Certi Generator</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container" style="border:2px dashed black;padding:10px;margin-top:10px;">
-        <h1>Select Font Style File(ttf)</h1>
-        <!--<div class="form-check">
-            <input class="form-check-input" type="radio" name="fontStyle" id="fontStyle1" checked value="JosefinSans-Regular">
+    <!-- Button trigger modal -->
+  <button id="launch-modal" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="display: none;">
+    Launch Loader
+  </button>
+  
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="exampleModalLabel" style="color: black;">File Being Uploaded...</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="loader-section">
+                        <div class="loader"></div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="display: none;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="close-modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" style="border:3px dashed wheat;padding:10px;margin-top:10px;">
+        <h1>Select Font Style File</h1>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="fontStyle" id="fontStyle1" checked value="https://res.cloudinary.com/codemafia/raw/upload/v1621670021/FontFiles/zkpb9wnbqknyrawytadp.ttf">
             <label class="form-check-label" for="fontStyle1">
               JosefinSans-Regular
             </label>
         </div>
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="fontStyle" id="fontStyle2" value="JosefinSans-SemiBold">
+            <input class="form-check-input" type="radio" name="fontStyle" id="fontStyle2" value="https://res.cloudinary.com/codemafia/raw/upload/v1621670067/FontFiles/ag4zajq2ouygpcxihzxv.ttf">
             <label class="form-check-label" for="fontStyle2">
               JosefinSans-SemiBold
             </label>
         </div>
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="fontStyle" id="fontStyle3" value="JosefinSans-Bold">
+            <input class="form-check-input" type="radio" name="fontStyle" id="fontStyle3" value="https://res.cloudinary.com/codemafia/raw/upload/v1621670096/FontFiles/tf06p1dxeb5iei6mdkgn.ttf">
             <label class="form-check-label" for="fontStyle2">
               JosefinSans-Bold
             </label>
         </div>
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="fontStyle" id="fontStyle2" value="Pattaya">
+            <input class="form-check-input" type="radio" name="fontStyle" id="fontStyle2" value="https://res.cloudinary.com/codemafia/raw/upload/v1621669772/FontFiles/ab8xhnf3hj7zd0uralvn.otf">
             <label class="form-check-label" for="fontStyle2">
-              Pattaya
+              LemonMilk-Regular
             </label>
         </div>
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="fontStyle" id="fontStyle3" value="Roboto">
+            <input class="form-check-input" type="radio" name="fontStyle" id="fontStyle3" value="https://res.cloudinary.com/codemafia/raw/upload/v1621670147/FontFiles/zsowppzgcxr0vllqobic.ttf">
             <label class="form-check-label" for="fontStyle2">
-              Roboto
+              Cambria-Regular
             </label>
-        </div>-->
-        <input type="file" onchange="loadFile(event)">
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="fontStyle" id="fontStyle3" value="https://res.cloudinary.com/codemafia/raw/upload/v1621670240/FontFiles/ceh9hu8cch1lpbydxjg4.ttf">
+            <label class="form-check-label" for="fontStyle2">
+              Cambria-Bold
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="fontStyle" id="fontStyle3" value="https://res.cloudinary.com/codemafia/raw/upload/v1621670172/FontFiles/xrggnirwmhlknd40xobc.ttf">
+            <label class="form-check-label" for="fontStyle2">
+              Certificate 400
+            </label>
+        </div>
+        <h3>Else Upload Your Own Custom Font File (.ttf/.otf)</h3>
+        <input type="file" onchange="loadFile(event)" accept=".ttf,.otf">
         <br><br>
         <button class="btn btn-primary" onclick="moveToStep2()">Next</button>
     </div>
@@ -52,29 +90,34 @@
     var curTtfFile = null;
 
     async function moveToStep2(){
-
-        var formData = new FormData();
-        formData.append("file", curTtfFile);
-        formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
-        formData.append("tags", "browser_upload");
-        formData.append("folder","FontFiles");
-        console.log(formData);
-        const req = new XMLHttpRequest();
-        req.open("POST", CLOUDINARY_URL);
-        req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-        req.send(formData);
-        req.onreadystatechange = await function () {
-            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-                var response = JSON.parse(req.responseText);
-                var url = response.secure_url;
-                var pub_url = response.public_id;
-                localStorage.setItem('FontFileUrl',url);
-                localStorage.setItem('FontFilePublicUrl',pub_url);
-                console.log(url)
-                //var fontStyle = document.querySelector('input[name="fontStyle"]:checked').value;
-                //localStorage.setItem('fontStyle',fontStyle);
-                //console.log(fontStyle);
-                window.location.href = "step2";
+        if(curTtfFile == null){
+            var FontFileUrl = document.querySelector('input[name="fontStyle"]:checked').value;
+            localStorage.setItem('FontFileUrl',FontFileUrl);
+            console.log(FontFileUrl);
+            window.location.href = "step2";
+        }else{
+            document.getElementById("launch-modal").click();
+            var formData = new FormData();
+            formData.append("file", curTtfFile);
+            formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+            formData.append("tags", "browser_upload");
+            formData.append("folder","FontFiles");
+            console.log(formData);
+            const req = new XMLHttpRequest();
+            req.open("POST", CLOUDINARY_URL);
+            req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+            req.send(formData);
+            req.onreadystatechange = await function () {
+                if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                    var response = JSON.parse(req.responseText);
+                    var url = response.secure_url;
+                    var pub_url = response.public_id;
+                    localStorage.setItem('FontFileUrl',url);
+                    localStorage.setItem('FontFilePublicUrl',pub_url);
+                    console.log(url)
+                    document.getElementById("close-modal").click();
+                    window.location.href = "step2";
+                }
             }
         }
     }
@@ -84,4 +127,40 @@
         curTtfFile = file;    
     };
 </script>
+<style>
+    body{
+        background: #42275a;  /* fallback for old browsers */
+        background: -webkit-linear-gradient(to right, #734b6d, #42275a);  /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(to right, #734b6d, #42275a); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        color:wheat;
+        font-family: 'Dancing Script', cursive;
+        font-size: 1.5em;
+    }
+    .form-check{
+        font-size: 1.5em;
+        margin:0.5em;
+    }
+    .btn{
+        font-size: 1.5em;
+    }
+    .loader {
+        border: 16px solid #f3f3f3; /* Light grey */
+        border-top: 16px solid #42275a; /* Blue */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+    }
+    .loader-section{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
 </html>

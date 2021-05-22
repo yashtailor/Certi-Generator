@@ -2,3 +2,4 @@ numpy==1.19.5
 Flask==1.1.2
 Pillow==8.2.0
 gunicorn==20.1.0
+cloudinary==1.25.0

@@ -33,6 +33,9 @@ def generate_certis(data):
         files = os.listdir()
         flag = False
         for file in files:
+            if file.endswith(".pdf"):
+                os.remove(file)
+                continue
             if file == "Certis.zip":
                 flag = True
         if flag:

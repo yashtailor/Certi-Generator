@@ -7,12 +7,39 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.gstatic.com">
-<link href="https://fonts.googleapis.com/css2?family=Pattaya&family=Roboto:wght@100&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pattaya&family=Roboto:wght@100&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container" style="border:2px dashed black;padding:10px;margin-top:10px;">
+     <!-- Button trigger modal -->
+  <button id="launch-modal" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="display: none;">
+    Launch Loader
+  </button>
+  
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="exampleModalLabel" style="color: black;">File Being Uploaded...</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="loader-section">
+                        <div class="loader"></div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="display: none;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="close-modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" style="border:3px dashed wheat;padding:10px;margin-top:10px;">
         <h1>Upload the Sheet (.csv)</h1>
-        <input type="file" onchange="loadFile(event)">
+        <input type="file" onchange="loadFile(event)" accept=".csv">
+        <br><br>
+        <a href="/get-template" target="blank" id="download"><button class="btn btn-success">Download Template</button></a>
         <br><br>
         <button class="btn btn-primary" onclick="moveToStep4()">Next</button>
     </div>
@@ -29,6 +56,7 @@
     };
 
     async function moveToStep4(){
+        document.getElementById("launch-modal").click();
         var formData = new FormData();
         formData.append("file", curSheet);
         formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
@@ -47,9 +75,36 @@
                 localStorage.setItem('SheetUrl',url);
                 localStorage.setItem('SheetPublicUrl',pub_url);
                 console.log(url)
+                document.getElementById("close-modal").click();
                 window.location.href = "step4";
             }
         }
     }
 </script>
+<style>
+    body{
+        background: #42275a;  /* fallback for old browsers */
+        background: -webkit-linear-gradient(to right, #734b6d, #42275a);  /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(to right, #734b6d, #42275a); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        color:wheat;
+        font-family: 'Dancing Script', cursive;
+        font-size: 1.5em;
+    }
+    .btn{
+        font-size: 1.5em;
+    }
+    .loader {
+        border: 16px solid #f3f3f3; /* Light grey */
+        border-top: 16px solid #42275a; /* Blue */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+    }
+    .loader-section{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+</style>
 </html>
