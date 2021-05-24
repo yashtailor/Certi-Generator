@@ -81,6 +81,14 @@
         <input type="file" onchange="loadFile(event)" accept=".ttf,.otf">
         <br><br>
         <button class="btn btn-primary" onclick="moveToStep2()">Next</button>
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="center-bread">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item active" aria-current="page">Step 1</li>
+              <li class="breadcrumb-item"><a href="/step2">Step 2</a></li>
+              <li class="breadcrumb-item"><a href="/step3">Step 3</a></li>
+              <li class="breadcrumb-item"><a href="/step4">Step 4</a></li>
+            </ol>
+        </nav>
     </div>
 </body>
 <script>
@@ -157,7 +165,19 @@
         justify-content: center;
         align-items: center;
     }
-
+    .breadcrumb{
+        border: 2px solid wheat;
+        padding: 1em;
+    }
+    .center-bread{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .active{
+        color: lightblue !important;
+    }
     @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }

@@ -42,6 +42,14 @@
         <a href="/get-file?v=1" target="blank" style="display: none;" id="download"><button class="btn btn-success">Download</button></a>
         <br><br>
         <a href="/" id="back"><button class="btn btn-primary">Back</button></a>
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="center-bread">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="/step1">Step 1</a></li>
+              <li class="breadcrumb-item"><a href="/step2">Step 2</a></li>
+              <li class="breadcrumb-item"><a href="/step3">Step 3</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Step 4</li>
+            </ol>
+        </nav>
     </div>
 </body>
 <script>
@@ -155,6 +163,19 @@
         width: 100%;
         display: flex;
         justify-content: center;
+    }
+    .breadcrumb{
+        border: 2px solid wheat;
+        padding: 1em;
+    }
+    .center-bread{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .active{
+        color: lightblue !important;
     }
     @keyframes spin {
         0% { transform: rotate(0deg); }

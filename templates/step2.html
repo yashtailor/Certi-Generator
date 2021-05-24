@@ -45,6 +45,14 @@
         <a href="/get-certificate-template" target="blank" id="download"><button class="btn btn-success">Download Template</button></a>
         <br><br>
         <button class="btn btn-primary" onclick="moveToStep3()">Next</button>
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="center-bread">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="/step1">Step 1</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Step 2</li>
+              <li class="breadcrumb-item"><a href="/step3">Step 3</a></li>
+              <li class="breadcrumb-item"><a href="/step4">Step 4</a></li>
+            </ol>
+        </nav>
     </div>
 </body>
 <script>
@@ -291,6 +299,19 @@
         width: 100%;
         display: flex;
         justify-content: center;
+    }
+    .breadcrumb{
+        border: 2px solid wheat;
+        padding: 1em;
+    }
+    .center-bread{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .active{
+        color: lightblue !important;
     }
     @keyframes spin {
         0% { transform: rotate(0deg); }
