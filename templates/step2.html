@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Pattaya&family=Roboto:wght@100&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
      <!-- Button trigger modal -->
@@ -87,10 +88,10 @@
             newText.style.fontSize = "20px";
             newText.style.fontFamily = 'CustomFont';
 
-            var buttonP = document.createElement('span');
-            buttonP.classList.add('badge');
-            buttonP.classList.add('bg-success');
-            buttonP.innerText = "+";
+            var buttonP = document.createElement('icon');
+            buttonP.classList.add('fa');
+            buttonP.classList.add('fa-plus-square');
+            // buttonP.innerText = "+";
             buttonP.style.margin = "2px";
             buttonP.addEventListener('click',(event)=>{
                 let curFont = newText.style.fontSize;
@@ -98,10 +99,10 @@
                 event.stopPropagation();
             })
 
-            var buttonM = document.createElement('span');
-            buttonM.innerText = "-";
-            buttonM.classList.add('badge');
-            buttonM.classList.add('bg-primary');
+            var buttonM = document.createElement('icon');
+            // buttonM.innerText = "-";
+            buttonM.classList.add('fa');
+            buttonM.classList.add('fa-minus-square');
             buttonM.style.margin = "2px";
             buttonM.addEventListener('click',(event)=>{
                 let curFont = newText.style.fontSize;
@@ -109,33 +110,47 @@
                 event.stopPropagation();
             })
 
-            var buttonX = document.createElement('span');
-            buttonX.innerText = "X";
-            buttonX.classList.add('badge');
-            buttonX.classList.add('bg-danger');
+            var buttonX = document.createElement('icon');
+            // buttonX.innerText = "X";
+            buttonX.classList.add('fa');
+            buttonX.classList.add('fa-remove');
             buttonX.style.margin = "2px";
             buttonX.addEventListener('click',(event)=>{
                 document.getElementsByTagName('body')[0].removeChild(newGlobalText); 
                 event.stopPropagation();
             })
 
-            var buttonSZ = document.createElement('span');
-            buttonSZ.classList.add('badge');
-            buttonSZ.classList.add('bg-info');
-            buttonSZ.innerText = "Sz";
+            var buttonSZ = document.createElement('icon');
+            buttonSZ.classList.add('fa');
+            buttonSZ.classList.add('fa-text-height');
+            // buttonSZ.innerText = "Sz";
             buttonSZ.style.margin = "2px";
             buttonSZ.addEventListener('click',(event)=>{
-                var sz = prompt("Enter the Font Size:");
+                var sz = prompt("Enter the Font Size:",newText.style.fontSize.substr(0,newText.style.fontSize.length-2));
                 if(sz!=null && sz > 0){
                     newText.style.fontSize = sz;
+                }
+            })
+
+            var buttonE = document.createElement('icon');
+            buttonE.classList.add('fa');
+            buttonE.classList.add('fa-pencil-square');
+            // buttonE.innerHTML = "<i class='fa fa-home'></i>"
+            // buttonE.innerText = "E";
+            buttonE.style.margin = "2px";
+            buttonE.addEventListener('click',(event)=>{
+                var updatedText = prompt("Update:",newText.innerText);
+                if(updatedText!=null){
+                    newText.innerText = updatedText;
                 }
             })
 
             newGlobalText.appendChild(newText);
             newGlobalText.appendChild(buttonP);
             newGlobalText.appendChild(buttonM);
-            newGlobalText.appendChild(buttonX);
+            newGlobalText.appendChild(buttonE);
             newGlobalText.appendChild(buttonSZ);
+            newGlobalText.appendChild(buttonX);
 
             newText.onmousedown = function(event) {
 
